@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>CSM41-WEB Demos</title>
+        <h:outputStylesheet name="css/demos.css"/>
+    </h:head>
+    <h:body>
+        <h:form id="form-principal">
+            <p:growl/>
+            <p:outputPanel styleClass="topo-pagina">
+                <span>CIDADES DO BRASIL</span>
+            </p:outputPanel>
+            <p:panel header="Inicialização" styleClass="config-inicial">
+                <p:outputPanel styleClass="upload-button">
+                    <p:fileUpload id="carrega-estados"
+                                  value="#{uploadBean.file}" mode="simple" skinSimple="true"
+                                  auto="true" accept=".csv" label="Carregar estados..."
+                                  update="@form" listener="#{uploadBean.uploadListener}"
+                                  style="margin-bottom: 2em"/>
+                    </p:outputPanel>
+                <p:outputPanel styleClass="upload-button">
+                    <p:fileUpload id="carrega-municipios"
+                                  value="#{uploadBean.file}" mode="simple" skinSimple="true"
+                                  auto="true" accept=".csv" label="Carregar municipios..."
+                                  update="@form" listener="#{uploadBean.uploadListener}"
+                                  disabled="#{empty demosAppBean.estados}"/>
+                </p:outputPanel>
+            </p:panel>
+            
+            <p:outputPanel rendered="#{demosAppBean.inicializado}">
+
+                <p:panel id="capital-estado" header="Capital do estado"
+                         toggleable="true" collapsed="true">
+                    <p:outputPanel styleClass="painel-estado-municipio">
+                        <p:outputPanel styleClass="estado-municipio-left">
+                            <p:outputPanel styleClass="select-menu">
+                                <p:selectOneMenu value="#{capitalEstadoBean.uf}" styleClass="select-menu">
+                                    <f:selectItem itemLabel="Selecione..." value="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{demosAppBean.estados}" var="e"
+                                                   itemLabel="#{e.uf}" itemValue="#{e.uf}"/>
+                                    <p:ajax update="info-capital"/>
+                                </p:selectOneMenu>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                        <p:outputPanel styleClass="painel-estado-municipio">
+                            <p:panelGrid id="info-capital" columns="2" styleClass="info-municipio"
+                                         columnClasses="labels-capital,info-capital-valor">
+                                <p:outputLabel value="Capital:"/>
+                                <h:outputText value="#{capitalEstadoBean.capital.nome}"/>
+                                <p:outputLabel value="Código IBGE:"/>
+                                <h:outputText value="#{capitalEstadoBean.capital.ibge}"/>
+                                <p:outputLabel value="População:"/>
+                                <h:outputText value="#{capitalEstadoBean.capital.populacao}"/>
+                                <p:outputLabel value="Porte:"/>
+                                <h:outputText value="#{capitalEstadoBean.capital.porte}"/>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                </p:panel>
+
+                <p:panel id="municipio-estado" header="Informações do município (select)"
+                         toggleable="true" collapsed="true">
+                    <p:outputPanel  styleClass="painel-estado-municipio">
+                        <p:outputPanel styleClass="estado-municipio-left">
+                            <p:outputPanel styleClass="select-estado">
+                                <p:selectOneMenu value="#{municipioEstadoBean.uf}" styleClass="select-menu">
+                                    <f:selectItem itemLabel="Selecione..." value="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{demosAppBean.estados}" var="e"
+                                                   itemLabel="#{e.uf}" itemValue="#{e.uf}"/>
+                                    <p:ajax update="select-municipio info-municipio"/>
+                                </p:selectOneMenu>
+                            </p:outputPanel>
+
+                            <p:outputPanel id="select-municipio" styleClass="select-municipio">
+                                <p:selectOneMenu value="#{municipioEstadoBean.ibge}" styleClass="select-menu">
+                                    <f:selectItem itemLabel="Selecione..." value="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{municipioEstadoBean.municipios}" var="m"
+                                                   itemLabel="#{m.nome}" itemValue="#{m.ibge}"/>
+                                    <p:ajax update="info-municipio"/>
+                                </p:selectOneMenu>
+                            </p:outputPanel>
+                        </p:outputPanel>
+
+                        <p:panelGrid id="info-municipio" columns="2" styleClass="info-municipio"
+                                     columnClasses="labels-capital,info-capital-valor">
+                            <p:outputLabel value="Código IBGE:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipio.ibge}"/>
+                            <p:outputLabel value="População:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipio.populacao}"/>
+                            <p:outputLabel value="Porte:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipio.porte}"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:panel>
+
+                <p:panel id="municipio-estado-auto" header="Informações do município (autocomplete)"
+                         toggleable="true" collapsed="true">
+                    <p:outputPanel  styleClass="painel-estado-municipio">
+                        <p:outputPanel styleClass="estado-municipio-left">
+                            <p:outputPanel styleClass="select-estado">
+                                <p:selectOneMenu value="#{municipioEstadoBean.uf}" styleClass="select-menu">
+                                    <f:selectItem itemLabel="Selecione..." value="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{demosAppBean.estados}" var="e"
+                                                   itemLabel="#{e.uf}" itemValue="#{e.uf}"/>
+                                    <p:ajax update="autocomplete-municipio info-municipio-auto"/>
+                                </p:selectOneMenu>
+                            </p:outputPanel>
+
+                            <p:outputPanel id="autocomplete-municipio">
+                                <p:autoComplete value="#{municipioEstadoBean.municipioSelecionado}"
+                                                completeMethod="#{municipioEstadoBean.completeMunicipio}"
+                                                var="m" itemLabel="#{m.nome}" itemValue="#{m}"
+                                                converter="#{nomeMunicipioConverter}"
+                                                forceSelection="true"
+                                                inputStyleClass="select-menu">
+                                    <p:ajax event="itemSelect" update="info-municipio-auto"/>
+                                </p:autoComplete>
+                            </p:outputPanel>
+                        </p:outputPanel>
+
+                        <p:panelGrid id="info-municipio-auto" columns="2" styleClass="info-municipio"
+                                     columnClasses="labels-capital,info-capital-valor">
+                            <p:outputLabel value="Código IBGE:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.ibge}"/>
+                            <p:outputLabel value="População:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.populacao}"/>
+                            <p:outputLabel value="Porte:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.porte}"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:panel>
+
+                <p:panel id="municipio-overlay" header="Informações do município (overlay)"
+                         toggleable="true" collapsed="true">
+                    <p:outputPanel  styleClass="painel-estado-municipio">
+                        <p:outputPanel styleClass="estado-municipio-left">
+                            <p:commandButton id="sel-municipio-button" type="button" value="Selecionar município..."/>
+                            <p:overlayPanel for="sel-municipio-button" dynamic="true" style="width: 400px"
+                                            widgetVar="overlayMun">
+                                <p:dataTable value="#{demosAppBean.municipios}" var="m"
+                                             rows="6" paginator="true" pageLinks="3"
+                                             selectionMode="single"
+                                             selection="#{municipioEstadoBean.municipioSelecionado}"
+                                             rowKey="#{m.ibge}">
+                                    <p:ajax event="rowSelect" update="form-principal:info-municipio-overlay"
+                                            oncomplete="PF('overlayMun').hide()"/>
+                                    <p:column headerText="UF" width="3rem"
+                                              sortBy="#{m.uf}" filterBy="#{m.uf}">
+                                        <h:outputText value="#{m.uf}"/>
+                                    </p:column>
+                                    <p:column headerText="Nome"
+                                              sortBy="#{m.nome}" filterBy="#{m.nome}">
+                                        <h:outputText value="#{m.nome}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:overlayPanel>
+                        </p:outputPanel>
+
+                        <p:panelGrid id="info-municipio-overlay" columns="2" styleClass="info-municipio"
+                                     columnClasses="labels-capital,info-capital-valor">
+                            <p:outputLabel value="Município:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.nome}-#{municipioEstadoBean.municipioSelecionado.uf}"/>
+                            <p:outputLabel value="Código IBGE:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.ibge}"/>
+                            <p:outputLabel value="População:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.populacao}"/>
+                            <p:outputLabel value="Porte:"/>
+                            <h:outputText value="#{municipioEstadoBean.municipioSelecionado.porte}"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:panel>
+
+                <p:panel id="todos-os-municipios" header="Todos os municípios"
+                         toggleable="true" collapsed="true">
+                    <p:dataTable id="tabela-municipios" value="#{tabelaMunicipiosBean.dataModel}"
+                                 paginator="true" rows="20"
+                                 var="m">
+                        <p:column headerText="Cód IBGE" width="8rem">
+                            <h:outputText value="#{m.ibge}"/>
+                        </p:column>
+                        <p:column headerText="Município"
+                                  sortBy="#{m.nome}" filterBy="#{m.nome}">
+                            <h:outputText value="#{m.nome}"/>
+                        </p:column>
+                        <p:column headerText="UF" width="4rem"
+                                  sortBy="#{m.uf}" filterBy="#{m.uf}">
+                            <h:outputText value="#{m.uf}"/>
+                        </p:column>
+                        <p:column headerText="População" width="8rem"
+                                  style="text-align: right">
+                            <h:outputText value="#{m.populacao}"/>
+                        </p:column>
+                        <p:column headerText="Porte" width="15rem">
+                            <h:outputText value="#{m.porte}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel> 
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>
+

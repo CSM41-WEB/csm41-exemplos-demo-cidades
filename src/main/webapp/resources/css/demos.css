@@ -1,0 +1,65 @@
+.topo-pagina {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    background: lightgrey;
+    height: 64pt;
+}
+
+.topo-pagina span {
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 32pt;
+}
+
+.painel-capital-estado {
+    display: flex;
+    align-items: flex-start;
+}
+
+.painel-estado-municipio {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+}
+
+.select-estado {
+    display: inline-block;
+    width: 10rem;
+}
+
+.info-municipio {
+    display: inline-block;
+}
+
+.labels-capital {
+    font-weight: bold;
+    width: 150px;
+    text-align: right;
+}
+
+.info-capital-valor {
+    width: 200px;
+}
+
+.estado-municipio-left {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    margin-right: 1rem;
+}
+
+.select-municipio-left .select-estado {
+    text-align: left;
+}
+
+.select-municipio-left .select-municipio {
+    display: inline-block;
+    width: auto;
+}
+
+.estado-municipio-left .select-menu {
+    width: 20rem;
+}
+

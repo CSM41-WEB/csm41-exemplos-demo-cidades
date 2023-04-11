@@ -3,8 +3,8 @@ package aulas.web.demos;
 import aulas.web.demos.suporte.Estado;
 import aulas.web.demos.suporte.Municipio;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * Bean de aplicação.

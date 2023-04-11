@@ -1,13 +1,11 @@
 package aulas.web.demos;
 
-import aulas.web.demos.suporte.Estado;
-import aulas.web.demos.suporte.Municipio;
 import aulas.web.demos.suporte.MunicipioLazyDataModel;
 import java.io.Serializable;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * Suporte à exibição da tabela de municípios.
